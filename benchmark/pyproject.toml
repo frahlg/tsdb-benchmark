@@ -1,0 +1,24 @@
+[project]
+name = "tsdb-benchmark"
+version = "0.1.0"
+description = "TSDB Benchmark Suite for Sourceful Energy"
+requires-python = ">=3.12"
+dependencies = [
+    "httpx>=0.27.0",
+    "aiohttp>=3.9.0",
+    "psycopg[binary]>=3.2.0",
+    "clickhouse-connect>=0.7.0",
+    "pandas>=2.2.0",
+    "numpy>=1.26.0",
+    "rich>=13.7.0",
+    "tabulate>=0.9.0",
+]
+
+[project.scripts]
+benchmark = "run_benchmarks:main"
+
+[tool.uv]
+dev-dependencies = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+]
