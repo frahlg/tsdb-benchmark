@@ -30,6 +30,110 @@ This significantly impacts cloud costs despite its good 6.2x compression.
 
 ---
 
+## Licensing & Open Source Evaluation
+
+**Design Principle:** Fully open source with no vendor lock-in. Clustering must be freely available.
+
+### License Summary
+
+| Database | License | OSS Clustering | Production-Ready OSS | Verdict |
+|----------|---------|----------------|---------------------|---------|
+| **ClickHouse** | Apache 2.0 | ✅ Yes | ✅ Full-featured | ✅ **Fully Open** |
+| **VictoriaMetrics** | Apache 2.0 | ✅ Yes | ✅ Full-featured | ✅ **Fully Open** |
+| **QuestDB** | Apache 2.0 | ❌ Enterprise | ⚠️ Single-node only | ⚠️ Limited |
+| **TimescaleDB** | Apache 2.0 + TSL | ⚠️ Limited | ⚠️ Core features TSL | ⚠️ Restricted |
+| **Elasticsearch** | SSPL/ELv2/AGPL | ✅ Yes | ⚠️ AGPL copyleft | ⚠️ Complex |
+| **InfluxDB2** | MIT | ❌ Enterprise | ⚠️ Single-node only | ❌ Not viable |
+| **InfluxDB3 Core** | MIT/Apache 2.0 | ❌ Enterprise | ❌ 5 DB limit, no HA | ❌ Not viable |
+
+### Detailed Licensing Analysis
+
+#### ✅ Fully Open Source (Recommended)
+
+**ClickHouse** - [Apache 2.0](https://github.com/ClickHouse/ClickHouse/blob/master/LICENSE)
+- Fully open source since 2016, permissive license
+- Clustering, replication, sharding all included in OSS
+- No enterprise-gated features for core functionality
+- Active development: $6.35B valuation, Series C funding (May 2025)
+- **Verdict:** Best choice for open source analytics at scale
+
+**VictoriaMetrics** - [Apache 2.0](https://github.com/VictoriaMetrics/VictoriaMetrics)
+- Both single-node and cluster versions are fully open source
+- [Committed to never changing license](https://victoriametrics.com/blog/bsl-is-short-term-fix-why-we-choose-open-source/)
+- Enterprise adds ML anomaly detection, Kafka integration, support only
+- No contributor agreement = community owns contributions
+- **Verdict:** Best choice for open source metrics/monitoring
+
+#### ⚠️ Restricted Open Source
+
+**QuestDB** - [Apache 2.0](https://github.com/questdb/questdb) (OSS core only)
+- Core engine is Apache 2.0
+- **Clustering, HA, RBAC require Enterprise license**
+- Multi-primary writes = Enterprise only
+- OSS is single-node only
+- **Verdict:** Not suitable if clustering is required
+
+**TimescaleDB** - Apache 2.0 + [Timescale License (TSL)](https://www.tigerdata.com/legal/licenses)
+- Core hypertables are Apache 2.0
+- **Compression, continuous aggregates, tiered storage under TSL**
+- TSL prohibits offering as DBaaS (anti-cloud-vendor clause)
+- Azure PostgreSQL only supports Apache features (limited)
+- Note: Rebranded to Tiger Data (June 2025)
+- **Verdict:** Key features require TSL acceptance; not fully open
+
+**Elasticsearch** - [SSPL/ELv2/AGPL](https://www.elastic.co/pricing/faq/licensing) (triple-licensed)
+- Changed from Apache 2.0 → SSPL in 2021 (AWS conflict)
+- [Added AGPL in 2024](https://www.elastic.co/blog/elasticsearch-is-open-source-again) to regain "open source" status
+- AGPL requires source disclosure if modified and served over network
+- SSPL is NOT OSI-approved (discriminates against cloud providers)
+- Clustering is available in all license options
+- **Verdict:** Complex licensing; AGPL copyleft may be problematic
+
+#### ❌ Not Recommended for Open Source Strategy
+
+**InfluxDB2** - MIT
+- MIT licensed but [clustering removed from OSS in 2016](https://tdengine.com/influxdb-vs-tdengine-oss-cluster/)
+- HA and clustering require InfluxDB Enterprise (paid)
+- "Bait and switch" controversy in community
+- Single-node only for production = not scalable
+- **Verdict:** Cannot scale without paying for Enterprise
+
+**InfluxDB3 Core** - MIT/Apache 2.0
+- [GA released April 2025](https://www.influxdata.com/blog/influxdb3-open-source-public-alpha/)
+- **Severe limitations:**
+  - 5 database limit
+  - No data compactor (poor historical queries)
+  - No clustering or HA
+  - No read replicas
+  - No fine-grained security
+- Designed as "edge data collector", not production database
+- InfluxDB3 Enterprise required for any serious use
+- **Verdict:** Intentionally crippled; not production-ready
+
+### Clustering Capability Comparison
+
+| Database | Free Clustering | Replication | Sharding | HA |
+|----------|-----------------|-------------|----------|-----|
+| **ClickHouse** | ✅ Native | ✅ Async multi-master | ✅ Native | ✅ Yes |
+| **VictoriaMetrics** | ✅ vmagent + cluster | ✅ Yes | ✅ Yes | ✅ Yes |
+| **QuestDB** | ❌ Enterprise | ❌ Enterprise | ❌ Enterprise | ❌ Enterprise |
+| **TimescaleDB** | ⚠️ Multi-node (TSL) | ⚠️ PostgreSQL streaming | ⚠️ Limited | ⚠️ Limited |
+| **Elasticsearch** | ✅ Native | ✅ Yes | ✅ Yes | ✅ Yes |
+| **InfluxDB2** | ❌ Enterprise | ❌ Enterprise | ❌ Enterprise | ❌ Enterprise |
+| **InfluxDB3 Core** | ❌ Enterprise | ❌ Enterprise | ❌ Enterprise | ❌ Enterprise |
+
+### Recommendation for Open Source Strategy
+
+For a truly open source stack with no vendor dependencies:
+
+1. **ClickHouse + VictoriaMetrics** - Both Apache 2.0, both support free clustering
+2. Avoid InfluxDB (all versions) - Clustering always requires paid license
+3. Avoid QuestDB for production - Single-node OSS limits scalability
+4. Be cautious with Elasticsearch - AGPL copyleft requirements
+5. TimescaleDB acceptable if TSL terms are acceptable (no DBaaS offering)
+
+---
+
 ## Detailed Results
 
 ### Ingestion Performance

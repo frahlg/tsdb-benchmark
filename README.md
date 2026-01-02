@@ -4,20 +4,29 @@ A comprehensive benchmark comparing 7 open-source time-series databases for high
 
 ## Key Results
 
-| Database | Compression | Peak Memory | Ingestion | Monthly Cost* |
-|----------|-------------|-------------|-----------|---------------|
-| **ClickHouse** | **11.8x** | 583 MB | 158k rows/s | **$70** |
-| **VictoriaMetrics** | 9.7x | **443 MB** | 152k rows/s | **$72** |
-| Elasticsearch TSDB | 6.2x | 1700 MB | 43k rows/s | $161 |
-| InfluxDB2 | 2.0x | 446 MB | 46k rows/s | $262 |
-| InfluxDB3 Core | 1.3x | 850 MB | 10k rows/s | $414 |
-| TimescaleDB | 0.6x | 464 MB | 19k rows/s | $833 |
-| QuestDB | 0.4x | 684 MB | 221k rows/s | $1,154 |
+| Database | Compression | Peak Memory | Ingestion | Monthly Cost* | License |
+|----------|-------------|-------------|-----------|---------------|---------|
+| **ClickHouse** | **11.8x** | 583 MB | 158k rows/s | **$70** | ✅ Apache 2.0 |
+| **VictoriaMetrics** | 9.7x | **443 MB** | 152k rows/s | **$72** | ✅ Apache 2.0 |
+| Elasticsearch TSDB | 6.2x | 1700 MB | 43k rows/s | $161 | ⚠️ AGPL/SSPL |
+| InfluxDB2 | 2.0x | 446 MB | 46k rows/s | $262 | ❌ No OSS cluster |
+| InfluxDB3 Core | 1.3x | 850 MB | 10k rows/s | $414 | ❌ Crippled OSS |
+| TimescaleDB | 0.6x | 464 MB | 19k rows/s | $833 | ⚠️ TSL (partial) |
+| QuestDB | 0.4x | 684 MB | 221k rows/s | $1,154 | ❌ No OSS cluster |
 
 *Projected for 10,000 IoT devices @ 1-second intervals
 
 **Winner: ClickHouse** - Best compression (11.8x) with excellent ingestion speed.
 **Runner-up: VictoriaMetrics** - Lowest memory usage (443 MB) with great compression (9.7x).
+
+### Licensing Verdict
+
+For **true open source** with free clustering and no vendor lock-in:
+- ✅ **ClickHouse** & **VictoriaMetrics** - Apache 2.0, full clustering in OSS
+- ⚠️ **Elasticsearch** - AGPL copyleft (source disclosure required)
+- ⚠️ **TimescaleDB** - TSL restricts DBaaS; compression under TSL
+- ❌ **InfluxDB2/3** - Clustering requires Enterprise license
+- ❌ **QuestDB** - Clustering/HA requires Enterprise license
 
 > See [BENCHMARK_REPORT.md](BENCHMARK_REPORT.md) for the full analysis.
 
@@ -49,16 +58,16 @@ uv run python storage_test.py
 
 ## Databases Tested
 
-| Database | Version | Port | Web UI |
-|----------|---------|------|--------|
-| VictoriaMetrics | 1.106.1 | 8428 | http://localhost:8428/vmui |
-| QuestDB | 8.2.1 | 9000 | http://localhost:9000 |
-| ClickHouse | 24.8 | 8123 | http://localhost:8123/play |
-| TimescaleDB | latest-pg16 | 5432 | - |
-| Elasticsearch | 8.17.0 | 9200 | - |
-| InfluxDB2 | 2.7 | 8086 | http://localhost:8086 |
-| InfluxDB3 Core | latest | 8181 | - |
-| Grafana | 11.4.0 | 3000 | http://localhost:3000 |
+| Database | Version | License | OSS Clustering | Port |
+|----------|---------|---------|----------------|------|
+| VictoriaMetrics | 1.106.1 | Apache 2.0 | ✅ Yes | 8428 |
+| QuestDB | 8.2.1 | Apache 2.0 | ❌ Enterprise | 9000 |
+| ClickHouse | 24.8 | Apache 2.0 | ✅ Yes | 8123 |
+| TimescaleDB | latest-pg16 | Apache 2.0 + TSL | ⚠️ Limited | 5432 |
+| Elasticsearch | 8.17.0 | AGPL/SSPL/ELv2 | ✅ Yes | 9200 |
+| InfluxDB2 | 2.7 | MIT | ❌ Enterprise | 8086 |
+| InfluxDB3 Core | latest | MIT/Apache 2.0 | ❌ Enterprise | 8181 |
+| Grafana | 11.4.0 | AGPL | - | 3000 |
 
 ## Test Methodology
 
@@ -113,11 +122,19 @@ WALLET (authentication)
 
 ## Key Findings
 
+### Performance
 1. **ClickHouse has the best compression** (11.8x) - only 17 bytes per datapoint
 2. **VictoriaMetrics uses the least memory** (443 MB peak) - ideal for constrained environments
 3. **Elasticsearch TSDB uses 4x more memory** (1.7 GB) than alternatives - significantly impacts cloud costs
 4. **QuestDB is fastest for ingestion** (221k rows/s) but has poor storage efficiency (0.4x)
 5. **InfluxDB3 Core is not production-ready** - very slow ingestion (10k rows/s)
+
+### Licensing (Critical for Open Source Strategy)
+6. **Only ClickHouse & VictoriaMetrics offer free clustering** - Both Apache 2.0
+7. **InfluxDB removed clustering from OSS in 2016** - All versions require Enterprise for HA
+8. **QuestDB OSS is single-node only** - Clustering/HA/RBAC require Enterprise
+9. **TimescaleDB key features under TSL** - Compression, continuous aggregates restricted
+10. **Elasticsearch returned to open source (AGPL) in 2024** - But AGPL copyleft may be problematic
 
 ## License
 
